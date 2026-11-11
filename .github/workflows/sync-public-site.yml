@@ -9,6 +9,7 @@ on:
     paths:
       - '.github/workflows/sync-public-site.yml'
       - '.github/scripts/generate_story_pages.py'
+      - '.github/scripts/generate_category_og.py'
 
 permissions:
   contents: write
@@ -44,9 +45,21 @@ jobs:
             --exclude='.nojekyll' \
             --exclude='story/' \
             --exclude='og-default.png' \
+            --exclude='og-category-*.png' \
             --exclude='_nyu-source/' \
             _nyu-source/zennyu/ ./
           rm -rf _nyu-source
+      - name: Generate category-thumbnail images (only when absent)
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ ! -f og-category-good.png ] || [ ! -f og-category-forward.png ] || [ ! -f og-category-nature.png ] || [ ! -f og-category-repair.png ] || [ ! -f og-category-mind.png ] || [ ! -f og-category-food.png ]; then
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq fonts-noto-cjk
+            python3 -m venv /tmp/zennyu-og-py
+            /tmp/zennyu-og-py/bin/python -m pip install --disable-pip-version-check pillow==11.3.0
+            /tmp/zennyu-og-py/bin/python .github/scripts/generate_category_og.py
+          fi
       - name: Generate per-article Open Graph pages
         shell: bash
         run: |
