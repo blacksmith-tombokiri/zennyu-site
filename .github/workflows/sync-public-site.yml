@@ -10,6 +10,8 @@ on:
       - '.github/workflows/sync-public-site.yml'
       - '.github/scripts/generate_story_pages.py'
       - '.github/scripts/generate_category_og.py'
+      - 'article.html'
+      - 'article-v1.css'
 
 permissions:
   contents: write
