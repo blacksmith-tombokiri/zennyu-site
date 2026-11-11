@@ -1,0 +1,55 @@
+name: Sync public ぜんにゅー site
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 * * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: zennyu-public-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out public-site repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Check out NYU Network source
+        uses: actions/checkout@v4
+        with:
+          repository: blacksmith-tombokiri/nyu-network
+          ref: main
+          path: _nyu-source
+          persist-credentials: false
+      - name: Copy only the public zennyu website
+        shell: bash
+        run: |
+          set -euo pipefail
+          rsync -a --delete \
+            --exclude='.git/' \
+            --exclude='.github/' \
+            --exclude='README.md' \
+            --exclude='CNAME' \
+            --exclude='.nojekyll' \
+            --exclude='_nyu-source/' \
+            _nyu-source/zennyu/ ./
+          rm -rf _nyu-source
+      - name: Commit changes only when source files changed
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add -A
+          if git diff --cached --quiet; then
+            echo 'No public-site changes'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Sync public zennyu website from nyu-network/main'
+          git push origin HEAD:main
