@@ -21,7 +21,7 @@ CONFIG = (ROOT / "config.js").read_text(encoding="utf-8")
 
 
 def config_value(key: str) -> str:
-    match = re.search(r"\\b" + re.escape(key) + r"\\s*:\\s*['\"]([^'\"]+)['\"]", CONFIG)
+    match = re.search(r"\b" + re.escape(key) + r"\s*:\s*['\"]([^'\"]+)['\"]", CONFIG)
     if not match:
         raise RuntimeError(f"Cannot find {key} in public config.js")
     return match.group(1)
