@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>記事｜ぜんにゅー</title>
+<link rel="stylesheet" href="styles.css?v=20261031-3">
+<link rel="stylesheet" href="mobile-fixes.css?v=20261031-3">
+<link rel="stylesheet" href="desktop-v1.css?v=20261101-4">
+<link rel="stylesheet" href="article-v1.css?v=20261104-1">
+<link rel="stylesheet" href="design-v1.css?v=20261101-1" data-zennyu-design>
+<link rel="stylesheet" href="image-fixes.css?v=20261101-1">
+<link rel="stylesheet" href="error-ui.css?v=20261102-1">
+<style>
+.article-favorite-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:18px}.favorite-toggle{display:inline-flex;align-items:center;gap:8px;border:1px solid #cfd9d2;background:#fff;color:#334139;border-radius:999px;padding:9px 14px;font:inherit;font-weight:700;cursor:pointer}.favorite-toggle:hover{background:#f5f8f6}.favorite-toggle.saved{background:#edf5f0;border-color:#9db8a8;color:#275c43}.favorite-heart{font-size:19px;line-height:1}.favorite-list-link{color:#66736b;font-size:13px;font-weight:700;text-decoration:none}.favorite-list-link:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+<div id="site-header-root"></div>
+<main id="article-app"><div class="loading">記事を読み込み中...</div></main>
+<script src="config.js?v=20261031-3"></script>
+<script src="site-header.js?v=20261102-1"></script>
+<script src="image-display-v1.js?v=20261102-1"></script>
+<script src="app.js?v=20261111-1"></script>
+<script src="favorites-v1.js?v=20261102-1"></script>
+<script src="personal-data-v1.js?v=20261103-1"></script>
+<script src="error-handling-v1.js?v=20261102-1"></script>
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+  const root=document.querySelector('#article-app');
+  if(!root)return;
+  const updateCopy=()=>{
+    root.querySelectorAll('h2').forEach(el=>{
+      if(el.textContent.trim()==='関連する善兆')el.textContent='あわせて読みたい善兆';
+    });
+    root.querySelectorAll('.muted').forEach(el=>{
+      if(el.textContent.trim()==='関連する善兆はまだありません。')el.textContent='あわせて読みたい善兆はまだありません。';
+    });
+  };
+  updateCopy();
+  new MutationObserver(updateCopy).observe(root,{childList:true,subtree:true});
+});
+</script>
+</body>
+</html>
