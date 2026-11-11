@@ -33,7 +33,7 @@ def load_articles() -> list[dict]:
     rows = []
     for offset in range(0, 100000, 500):
         params = urllib.parse.urlencode({
-            "select": "public_id,title,summary,image_url,published_at",
+            "select": "public_id,title,summary,image_url,primary_category_code,published_at",
             "brand_slug": "eq.zen",
             "order": "published_at.desc.nullslast",
             "limit": "500",
@@ -71,7 +71,10 @@ def image_url_for(row: dict) -> tuple[str, bool]:
     url = urllib.parse.urlsplit(original)
     if url.scheme == "https" and url.hostname and not url.username and not url.password:
         return original, False
-    return SITE + "/og-default.png", True
+    category = str(row.get("primary_category_code") or "").strip()
+    if category not in {"good", "forward", "nature", "repair", "mind", "food"}:
+        category = "forward"
+    return SITE + "/og-category-" + category + ".png", True
 
 
 def make_html(template: str, row: dict) -> tuple[str, str]:
