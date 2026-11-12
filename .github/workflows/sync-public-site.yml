@@ -48,9 +48,27 @@ jobs:
             --exclude='story/' \
             --exclude='og-default.png' \
             --exclude='og-category-*.png' \
+            --exclude='favicon.ico' \
+            --exclude='favicon-*.png' \
+            --exclude='apple-touch-icon.png' \
+            --exclude='android-chrome-*.png' \
+            --exclude='.favicon-source.sha256' \
             --exclude='_nyu-source/' \
             _nyu-source/zennyu/ ./
           rm -rf _nyu-source
+      - name: Generate favicon assets when SVG changes
+        shell: bash
+        run: |
+          set -euo pipefail
+          svg_checksum="$(sha256sum favicon.svg | awk '{print $1}')"
+          if [ ! -f favicon.ico ] || [ ! -f favicon-32x32.png ] || [ ! -f apple-touch-icon.png ] || [ ! -f android-chrome-512x512.png ] || [ ! -f .favicon-source.sha256 ] || [ "$(cat .favicon-source.sha256)" != "$svg_checksum" ]; then
+            python3 -m venv /tmp/zennyu-favicon-py
+            /tmp/zennyu-favicon-py/bin/python -m pip install --disable-pip-version-check pillow==11.3.0 cairosvg==2.8.2
+            /tmp/zennyu-favicon-py/bin/python .github/scripts/generate_favicons.py
+            printf '%s\\n' "$svg_checksum" > .favicon-source.sha256
+          else
+            echo 'Favicon assets are current'
+          fi
       - name: Generate category-thumbnail images (only when absent)
         shell: bash
         run: |
