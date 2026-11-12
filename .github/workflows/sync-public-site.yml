@@ -65,7 +65,7 @@ jobs:
             python3 -m venv /tmp/zennyu-favicon-py
             /tmp/zennyu-favicon-py/bin/python -m pip install --disable-pip-version-check pillow==11.3.0 cairosvg==2.8.2
             /tmp/zennyu-favicon-py/bin/python .github/scripts/generate_favicons.py
-            printf '%s\\n' "$svg_checksum" > .favicon-source.sha256
+            echo "$svg_checksum" > .favicon-source.sha256
           else
             echo 'Favicon assets are current'
           fi
